@@ -90,6 +90,18 @@ export class Container {
                     this.data._autobone = value
                 }
             }),
+            _disableSlotColor: 1,
+            disableSlotColor: computed({
+                get: () => {
+                    return this.data._disableSlotColor
+                },
+                set: (value) => {
+                    this.stage.children.forEach(a => {
+                        a.disableSlotColor = value
+                    })
+                    this.data._disableSlotColor = value
+                }
+            }),
             skins: [],
             animations: [],
             tracks: [],

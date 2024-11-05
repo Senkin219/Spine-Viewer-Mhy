@@ -171,7 +171,7 @@ function loadFiles(fileUrls) {
 function onLoaded(loader, res) {
     const activeContainer = appStore.getActive()
 
-    const {alphaMode, zoom, timeScale, defaultMix, position, autobone} = activeContainer.data
+    const {alphaMode, zoom, timeScale, defaultMix, position, autobone, disableSlotColor} = activeContainer.data
     const {skins, animations, slots} = toRefs(activeContainer.data)
 
     const newSkins = appStore.superposition ? [...skins.value] : []
@@ -194,6 +194,7 @@ function onLoaded(loader, res) {
                 });
                 const skeletonAnimation = new Spine(res[key].spineData)
                 skeletonAnimation.autobone = autobone
+                skeletonAnimation.disableSlotColor = disableSlotColor
                 skeletonAnimation.position.set(position.x, position.y)
                 skeletonAnimation.scale.set(zoom)
                 skeletonAnimation.state.timeScale = timeScale

@@ -46,10 +46,22 @@
             <ol class="option-bar">
                 <li v-for="(alias, mode) in ['Off', 'On']">
                     <input type="radio" name="autobone"
-                           :id="alias" :value="mode"
+                           :id="'autobone-' + alias" :value="mode"
                            v-model.number="data.autobone"
                            class="list-option">
-                    <label :for="alias" class="alpha-mode-radio">{{ alias }}</label>
+                    <label :for="'autobone-' + alias" class="alpha-mode-radio">{{ alias }}</label>
+                </li>
+            </ol>
+        </div>
+        <div class="row">
+            <span title="Disable Slot Color">禁用Slot颜色</span>
+            <ol class="option-bar">
+                <li v-for="(alias, mode) in ['Off', 'On']">
+                    <input type="radio" name="disableSlotColor"
+                           :id="'disableSlotColor-' + alias" :value="mode"
+                           v-model.number="data.disableSlotColor"
+                           class="list-option">
+                    <label :for="'disableSlotColor-' + alias" class="alpha-mode-radio">{{ alias }}</label>
                 </li>
             </ol>
         </div>
