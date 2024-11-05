@@ -11,21 +11,20 @@ export class SpineMhy extends Spine {
     }
     autobone = 1;
     disableSlotColor = 1;
+    autoBoneTime = 0;
     update(dt) {
         if (this.autobone == 1) {
             let i = 1;
             let a = null;
-            let lastFrameTime = Date.now() / 1000;
-            const o = lastFrameTime * this.autoBoneSpeed.timeScale * this.state.timeScale;
+            this.autoBoneTime = this.autoBoneTime + dt * this.autoBoneSpeed.timeScale * this.state.timeScale;
             if (this.state.tracks[0]) {
                 i = this.state.tracks[0].mixDuration ? Math.min(1, this.state.tracks[0].mixTime / this.state.tracks[0].mixDuration) : 1;
                 if (i < 1 && this.state.tracks[0].mixingFrom) {
                     a = this.state.tracks[0].mixingFrom.animation.name;
                 }
             }
-            const s = Math.min(2, Math.abs(o - this.prevTime) / .0167);
-            this.prevTime = o;
-            this.autoBone.forEach(bone => bone.render(s, o, i, a));
+            const s = Math.min(2, dt * this.autoBoneSpeed.timeScale * this.state.timeScale / .0167);
+            this.autoBone.forEach(bone => bone.render(s, this.autoBoneTime, i, a));
         }
         if (this.disableSlotColor == 1) {
             const delayLimit = this.delayLimit;
