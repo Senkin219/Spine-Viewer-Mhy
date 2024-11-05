@@ -78,6 +78,18 @@ export class Container {
                     this.data._alphaMode = value
                 }
             }),
+            _autobone: 1,
+            autobone: computed({
+                get: () => {
+                    return this.data._autobone
+                },
+                set: (value) => {
+                    this.stage.children.forEach(a => {
+                        a.autobone = value
+                    })
+                    this.data._autobone = value
+                }
+            }),
             skins: [],
             animations: [],
             tracks: [],

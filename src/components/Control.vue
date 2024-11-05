@@ -42,6 +42,18 @@
             </ol>
         </div>
         <div class="row">
+            <span title="AutoBone">AutoBone</span>
+            <ol class="option-bar">
+                <li v-for="(alias, mode) in ['Off', 'On']">
+                    <input type="radio" name="autobone"
+                           :id="alias" :value="mode"
+                           v-model.number="data.autobone"
+                           class="list-option">
+                    <label :for="alias" class="alpha-mode-radio">{{ alias }}</label>
+                </li>
+            </ol>
+        </div>
+        <div class="row">
             <button @click="resetPosition" style="width: 70px" title="Reset Position">重置位置</button>
             <button @click="pauseAnimation" style="width: 70px" title="Stop Animation">暂停动画</button>
         </div>

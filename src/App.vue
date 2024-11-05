@@ -22,7 +22,7 @@ import ExportModal from "@/components/Export.vue";
 import ControlBar from "@/components/Control.vue";
 import GlobalSide from "@/components/GlobalSide.vue";
 import * as PIXI from 'pixi.js'
-import {Spine} from "pixi-spine";
+import {SpineMhy as Spine} from "@/utils/SpineMhy"
 import {getById, getUrlsByPaths, makeSwitcher} from "@/utils/util";
 import {onMounted, provide, ref, toRefs, watch} from "vue";
 import {useExportStore} from "@/stores/export";
@@ -171,7 +171,7 @@ function loadFiles(fileUrls) {
 function onLoaded(loader, res) {
     const activeContainer = appStore.getActive()
 
-    const {alphaMode, zoom, timeScale, defaultMix, position} = activeContainer.data
+    const {alphaMode, zoom, timeScale, defaultMix, position, autobone} = activeContainer.data
     const {skins, animations, slots} = toRefs(activeContainer.data)
 
     const newSkins = appStore.superposition ? [...skins.value] : []
@@ -183,6 +183,8 @@ function onLoaded(loader, res) {
 
     for (const key in res) {
         if (key.endsWith('skel') || key.endsWith('json')) {
+            res[key].spineData.extra = res[key].data.extra || {};
+            res[key].spineData.extraConfig = res[key].data.extraConfig || {};
             const splitText = key.split('/')
             activeContainer.name = splitText[splitText.length - 1].split('.')[0]
             try {
@@ -191,6 +193,7 @@ function onLoaded(loader, res) {
                     newTextures.push(p.baseTexture)
                 });
                 const skeletonAnimation = new Spine(res[key].spineData)
+                skeletonAnimation.autobone = autobone
                 skeletonAnimation.position.set(position.x, position.y)
                 skeletonAnimation.scale.set(zoom)
                 skeletonAnimation.state.timeScale = timeScale

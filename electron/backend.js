@@ -102,6 +102,10 @@ app.whenReady().then(() => {
                 return
             }
         }
+        if (reqUrl.endsWith('.tga')) {
+            callback({redirectURL: reqUrl.slice(0, -4) + '.png'})
+            return
+        }
         callback({cancel: false})
     })
 
