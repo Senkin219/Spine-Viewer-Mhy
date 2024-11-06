@@ -183,8 +183,6 @@ function onLoaded(loader, res) {
 
     for (const key in res) {
         if (key.endsWith('skel') || key.endsWith('json')) {
-            res[key].spineData.extra = res[key].data.extra || {};
-            res[key].spineData.extraConfig = res[key].data.extraConfig || {};
             const splitText = key.split('/')
             activeContainer.name = splitText[splitText.length - 1].split('.')[0]
             try {
@@ -192,6 +190,8 @@ function onLoaded(loader, res) {
                     p.baseTexture.alphaMode = alphaMode
                     newTextures.push(p.baseTexture)
                 });
+                res[key].spineData.extra = res[key].data.extra || {};
+                res[key].spineData.extraConfig = res[key].data.extraConfig || {};
                 const skeletonAnimation = new Spine(res[key].spineData)
                 skeletonAnimation.autobone = autobone
                 skeletonAnimation.disableSlotColor = disableSlotColor
