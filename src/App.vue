@@ -192,6 +192,7 @@ function onLoaded(loader, res) {
                 });
                 res[key].spineData.extra = res[key].data.extra || {};
                 res[key].spineData.extraConfig = res[key].data.extraConfig || {};
+                res[key].spineData.extraSlot = res[key].data.extraSlot || {};
                 const skeletonAnimation = new Spine(res[key].spineData)
                 skeletonAnimation.autobone = autobone
                 skeletonAnimation.disableSlotColor = disableSlotColor

@@ -1,5 +1,5 @@
 import { Spine } from "pixi-spine";
-import { AutoBone, BoneSpeedConfig } from './mhy_spine.ts';
+import { AutoBone, AutoBoneSpeed, AutoSlot } from '@/utils/SpineMhyExt';
 
 export class SpineMhy extends Spine {
     constructor(skeletonData) {
@@ -7,7 +7,10 @@ export class SpineMhy extends Spine {
         this.autoBone = Object.values(skeletonData.extra || {}).map(value => {
             return new AutoBone(value, this);
         });
-        this.autoBoneSpeed = new BoneSpeedConfig(skeletonData.extraConfig || {});
+        this.autoBoneSpeed = new AutoBoneSpeed(skeletonData.extraConfig || {});
+        this.autoSlot = Object.values(skeletonData.extraSlot || {}).map(value => {
+            return new AutoSlot(value, this);
+        });
     }
     autobone = 1;
     disableSlotColor = 1;
@@ -19,12 +22,13 @@ export class SpineMhy extends Spine {
             this.autoBoneTime = this.autoBoneTime + dt * this.autoBoneSpeed.timeScale * this.state.timeScale;
             if (this.state.tracks[0]) {
                 i = this.state.tracks[0].mixDuration ? Math.min(1, this.state.tracks[0].mixTime / this.state.tracks[0].mixDuration) : 1;
-                if (i < 1 && this.state.tracks[0].mixingFrom) {
+                if (i < 1 && this.state.tracks[0].mixingFrom && this.state.tracks[0].mixingFrom.animation) {
                     a = this.state.tracks[0].mixingFrom.animation.name;
                 }
             }
             const s = Math.min(2, dt * this.autoBoneSpeed.timeScale * this.state.timeScale / .0167);
             this.autoBone.forEach(bone => bone.render(s, this.autoBoneTime, i, a));
+            this.autoSlot.forEach(slot => slot.render(this.autoBoneTime));
         }
         if (this.disableSlotColor == 1) {
             const delayLimit = this.delayLimit;
