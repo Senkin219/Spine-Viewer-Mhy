@@ -1,6 +1,6 @@
 {
   "name": "spine-viewer-vue",
-  "version": "1.0.5",
+  "version": "1.0.8fix",
   "main": "electron/backend.js",
   "private": true,
   "scripts": {
@@ -14,10 +14,12 @@
   },
   "dependencies": {
     "gsap": "^3.12.4",
+    "fs-extra": "^11.2.0",
     "pinia": "^2.1.7",
     "pixi-spine": "^3.1.2",
     "pixi.js": "^6.5.10",
-    "vue": "^3.4.15"
+    "vue": "^3.4.15",
+    "vue-i18n": "^10.0.4"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.3",
