@@ -1,8 +1,10 @@
-const {app, BrowserWindow, ipcMain, Menu, MenuItem, dialog, session} = require('electron/main')
+const {app, BrowserWindow, ipcMain, Menu, MenuItem, dialog, session, protocol} = require('electron/main')
 const {exec, spawn} = require('child_process')
 const path = require('path')
 // const http = require("http");
 const fs = require('fs-extra')
+const mime = require('mime')
+const tga2png = require('tga2png')
 
 app.commandLine.appendSwitch('charset', 'utf-8');
 process.env.CACHE_PATH = path.join(__dirname, 'cache')
@@ -94,20 +96,45 @@ app.whenReady().then(() => {
 
     createWindow(log)
 
-    session.defaultSession.webRequest.onBeforeRequest({urls: ['file://*']}, (details, callback) => {
-        const [reqUrl, queryString] = details.url.split('?')
-        if (reqUrl.endsWith('.atlas')) {
-            const filePath = decodeURIComponent(reqUrl.slice(8))
-            if (!fs.existsSync(filePath)) {
-                callback({redirectURL: `${reqUrl}.txt?${queryString}`})
-                return
+    protocol.handle('file', async (request) => {
+        const [reqUrl, queryString] = request.url.split('?')
+        let filePath = decodeURIComponent(reqUrl.slice(8))
+        if (!fs.existsSync(filePath)) {
+            filePath = `${filePath}.txt`
+        }
+        try {
+            const fileContent = fs.readFileSync(filePath)
+            const mimeType = mime.getType(filePath)
+            if (filePath.endsWith('.json')) {
+                const jsonObject = JSON.parse(fileContent)
+                if (jsonObject.hasOwnProperty('skeleton') && jsonObject.skeleton.spine.substr(0, 3) === '4.2') {
+                    jsonObject.skeleton.spine = '4.1-force-load'
+                    jsonObject.bones.forEach(bone => {
+                        if (bone.hasOwnProperty('inherit')) {
+                            bone.transform = bone.inherit
+                        }
+                    })
+                }
+                jsonContent = JSON.stringify(jsonObject)
+                return new Response(jsonContent, {
+                    headers: { 'Content-Type': 'application/json' }
+                })
+            } else if (filePath.endsWith('.tga')) {
+                const pngBuffer = await tga2png(filePath)
+                return new Response(pngBuffer, {
+                    headers: { 'Content-Type': 'image/png' }
+                })
+            } else {
+                return new Response(fileContent, {
+                    headers: { 'Content-Type': mimeType || 'application/octet-stream' }
+                })
             }
+        } catch (error) {
+            return new Response(`Failed to read file: ${error.message}`, {
+                status: 500,
+                headers: { 'Content-Type': 'text/plain' }
+            })
         }
-        if (reqUrl.endsWith('.tga')) {
-            callback({redirectURL: reqUrl.slice(0, -4) + '.png'})
-            return
-        }
-        callback({cancel: false})
     })
 
     ipcMain.handle('port', () => server.address().port)
