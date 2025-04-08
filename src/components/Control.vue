@@ -43,7 +43,23 @@
                            :id="alias" :value="mode"
                            v-model.number="data.alphaMode"
                            class="list-option">
-                    <label :for="alias" class="alpha-mode-radio">{{ alias }}</label>
+                    <label :for="alias" class="mode-radio">{{ alias }}</label>
+                </li>
+            </ol>
+        </div>
+        <div class="row">
+            <span title="Scale Mode">{{ $t('control.scaleMode') }}</span>
+            <ol class="option-bar">
+                <li v-for="(mode, alias) in {
+                    Auto: -1,
+                    Nearest: SCALE_MODES.NEAREST,
+                    Linear: SCALE_MODES.LINEAR
+                }">
+                    <input type="radio" name="scale-mode"
+                           :id="alias" :value="mode"
+                           v-model.number="data.scaleMode"
+                           class="list-option">
+                    <label :for="alias" class="mode-radio">{{ alias }}</label>
                 </li>
             </ol>
         </div>
@@ -55,7 +71,7 @@
                            :id="'autobone-' + alias" :value="mode"
                            v-model.number="data.autobone"
                            class="list-option">
-                    <label :for="'autobone-' + alias" class="alpha-mode-radio">{{ alias }}</label>
+                    <label :for="'autobone-' + alias" class="mode-radio">{{ alias }}</label>
                 </li>
             </ol>
         </div>
@@ -67,7 +83,7 @@
                            :id="'disableSlotColor-' + alias" :value="mode"
                            v-model.number="data.disableSlotColor"
                            class="list-option">
-                    <label :for="'disableSlotColor-' + alias" class="alpha-mode-radio">{{ alias }}</label>
+                    <label :for="'disableSlotColor-' + alias" class="mode-radio">{{ alias }}</label>
                 </li>
             </ol>
         </div>
@@ -244,6 +260,7 @@ import {createTag, getFileUrl, getUrlsByPaths, makeSwitcher} from "@/utils/util"
 import {useExportStore} from "@/stores/export";
 import {useAppStore} from "@/stores/app";
 import {useI18n} from "vue-i18n";
+import {SCALE_MODES} from "pixi.js";
 
 const i18n = useI18n()
 
@@ -455,7 +472,7 @@ input[name='animation'] {
     background-color: #666666;
 }
 
-.option-bar .alpha-mode-radio {
+.option-bar .mode-radio {
     width: 100%;
     height: 100%;
     padding: 5px;
@@ -466,11 +483,11 @@ input[name='animation'] {
     display: inline-block;
 }
 
-.option-bar .alpha-mode-radio:hover {
+.option-bar .mode-radio:hover {
     background-color: #777777;
 }
 
-.option-bar input:checked + .alpha-mode-radio {
+.option-bar input:checked + .mode-radio {
     background-color: #748d6f;
 }
 

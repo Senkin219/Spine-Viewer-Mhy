@@ -21,7 +21,6 @@ import ControlBar from "@/components/Control.vue";
 import GlobalSide from "@/components/GlobalSide.vue";
 import * as PIXI from 'pixi.js'
 import {SpineMhy as Spine} from "@/utils/SpineMhy"
-import {TextureAtlasPage} from "pixi-spine";
 import {getById, getUrlsByPaths, makeSwitcher} from "@/utils/util";
 import {onMounted, provide, ref, toRefs, watch} from "vue";
 import {useExportStore} from "@/stores/export";
@@ -30,15 +29,12 @@ import {useAppStore} from "@/stores/app";
 import useApp from "@/hooks/useApp";
 import i18n from "@/utils/lang";
 
-(() => {
-    const setFilters = TextureAtlasPage.prototype.setFilters
-    TextureAtlasPage.prototype.setFilters = function () {
-        if (this.baseTexture.width !== this.width || this.baseTexture.height !== this.height) {
-            this.baseTexture.setSize(this.width, this.height)
-        }
-        setFilters.apply(this, arguments)
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'F12') {
+        e.preventDefault();
+        ipcRenderer.send('open-devtools');
     }
-})()
+})
 
 ipcRenderer.on('logging', (_ev, logs) => {
     console.log('[INFO] ', logs)
@@ -194,13 +190,14 @@ function loadFiles(fileUrls) {
 function onLoaded(loader, res) {
     const activeContainer = appStore.getActive()
 
-    const {alphaMode, zoom, timeScale, defaultMix, position, autobone, disableSlotColor} = activeContainer.data
+    const {alphaMode, scaleMode, zoom, timeScale, defaultMix, position, autobone, disableSlotColor} = activeContainer.data
     const {skins, animations, slots} = toRefs(activeContainer.data)
 
     const newSkins = appStore.superposition ? [...skins.value] : []
     const newAnimations = appStore.superposition ? [...animations.value] : []
     const newSlots = appStore.superposition ? [...slots.value] : []
     const newTextures = appStore.superposition ? activeContainer.textures : []
+    const newAtlases = appStore.superposition ? activeContainer.atlases : []
 
     const validSkeletonAnimations = []
 
@@ -209,8 +206,10 @@ function onLoaded(loader, res) {
             const splitText = key.split('/')
             activeContainer.name = splitText[splitText.length - 1].split('.')[0]
             try {
+                newAtlases.push(res[key].spineAtlas)
                 res[key].spineAtlas.pages.forEach(p => {
                     p.baseTexture.alphaMode = alphaMode
+                    if (scaleMode !== -1) p.baseTexture.scaleMode = scaleMode
                     newTextures.push(p.baseTexture)
                 });
                 res[key].spineData.extra = res[key].data.extra || {};
@@ -267,6 +266,7 @@ function onLoaded(loader, res) {
         animations.value = newAnimations
         slots.value = newSlots.sort(slotCompare)
         activeContainer.textures = newTextures
+        activeContainer.atlases = newAtlases
         activeContainer.data.tracks.length = 0
         activeContainer.data.queue.forEach(q => q.length = 0)
         appStore.items[appStore.activeIndex] = activeContainer.name

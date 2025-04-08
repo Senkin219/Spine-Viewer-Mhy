@@ -5,6 +5,7 @@ const path = require('path')
 const fs = require('fs-extra')
 const mime = require('mime')
 const tga2png = require('tga2png')
+const {fileURLToPath} = require('url')
 
 app.commandLine.appendSwitch('charset', 'utf-8');
 process.env.CACHE_PATH = path.join(__dirname, 'cache')
@@ -41,7 +42,7 @@ const createWindow = (log) => {
         win.loadURL('http://localhost:8192').then(() => {
             win.webContents.send('logging', log)
         })
-        win.openDevTools()
+        win.openDevTools({mode: 'detach'})
     } else {
         win.loadFile('./dist/index.html').then(() => {
             win.webContents.send('logging', log)
@@ -97,9 +98,8 @@ app.whenReady().then(() => {
     createWindow(log)
 
     protocol.handle('file', async (request) => {
-        const [reqUrl, queryString] = request.url.split('?')
-        let filePath = decodeURIComponent(reqUrl.slice(8))
-        if (!fs.existsSync(filePath)) {
+        let filePath = fileURLToPath(request.url)
+        if (filePath.endsWith('.atlas') && !fs.existsSync(filePath)) {
             filePath = `${filePath}.txt`
         }
         try {
@@ -138,6 +138,8 @@ app.whenReady().then(() => {
     })
 
     ipcMain.handle('port', () => server.address().port)
+
+    ipcMain.on('open-devtools', () => win.webContents.openDevTools({mode: 'detach'}))
     ipcMain.on('minimize', () => win.minimize())
     ipcMain.on('toggle-maximize', () => win.isMaximized() ? win.unmaximize() : win.maximize())
     ipcMain.on('close', () => win.close())
@@ -210,6 +212,9 @@ app.whenReady().then(() => {
                     win.webContents.send('logging', {name: 'move', error})
                 })
                 return
+            case 'WEBM-VP9':
+                ffmpegArgs.push(...['-c:v', 'libvpx-vp9', '-pix_fmt', 'yuva420p', '-auto-alt-ref', '0', '-crf', '17', `${outputPath}.webm`])
+                break
             default:
                 break
         }
