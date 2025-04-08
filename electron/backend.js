@@ -114,6 +114,15 @@ app.whenReady().then(() => {
                             bone.transform = bone.inherit
                         }
                     })
+                    if (jsonObject.hasOwnProperty('physics')) {
+                        jsonObject.physics.forEach(constraint => {
+                            const sortViaTransform = { 'name': constraint.name, 'order': constraint.order, 'bones': [], 'target': constraint.bone }
+                            if (!jsonObject.hasOwnProperty('transform')) {
+                                jsonObject.transform = []
+                            }
+                            jsonObject.transform.push(sortViaTransform)
+                        })
+                    }
                 }
                 jsonContent = JSON.stringify(jsonObject)
                 return new Response(jsonContent, {
