@@ -116,7 +116,7 @@ app.whenReady().then(() => {
                     })
                     if (jsonObject.hasOwnProperty('physics')) {
                         jsonObject.physics.forEach(constraint => {
-                            const sortViaTransform = { 'name': constraint.name, 'order': constraint.order, 'bones': [], 'target': constraint.bone }
+                            const sortViaTransform = { 'name': `physics-${constraint.name}`, 'order': constraint.order, 'bones': [constraint.bone], 'target': constraint.bone, 'mixRotate': 0, 'mixX': 0, 'mixY': 0, 'mixScaleX': 0, 'mixScaleY': 0, 'mixShearY': 0 }
                             if (!jsonObject.hasOwnProperty('transform')) {
                                 jsonObject.transform = []
                             }

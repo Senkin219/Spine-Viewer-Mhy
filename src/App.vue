@@ -190,7 +190,7 @@ function loadFiles(fileUrls) {
 function onLoaded(loader, res) {
     const activeContainer = appStore.getActive()
 
-    const {alphaMode, scaleMode, zoom, timeScale, defaultMix, position, autobone, disableSlotColor} = activeContainer.data
+    const {alphaMode, scaleMode, zoom, timeScale, defaultMix, position, autobone, disableSlotColor, enablePhysics} = activeContainer.data
     const {skins, animations, slots} = toRefs(activeContainer.data)
 
     const newSkins = appStore.superposition ? [...skins.value] : []
@@ -212,12 +212,14 @@ function onLoaded(loader, res) {
                     if (scaleMode !== -1) p.baseTexture.scaleMode = scaleMode
                     newTextures.push(p.baseTexture)
                 });
-                res[key].spineData.extra = res[key].data.extra || {};
-                res[key].spineData.extraConfig = res[key].data.extraConfig || {};
-                res[key].spineData.extraSlot = res[key].data.extraSlot || {};
+                res[key].spineData.extra = res[key].data.extra || {}
+                res[key].spineData.extraConfig = res[key].data.extraConfig || {}
+                res[key].spineData.extraSlot = res[key].data.extraSlot || {}
+                res[key].spineData.physics = res[key].data.physics || {}
                 const skeletonAnimation = new Spine(res[key].spineData)
                 skeletonAnimation.autobone = autobone
                 skeletonAnimation.disableSlotColor = disableSlotColor
+                skeletonAnimation.enablePhysics = enablePhysics
                 skeletonAnimation.position.set(position.x, position.y)
                 skeletonAnimation.scale.set(zoom)
                 skeletonAnimation.state.timeScale = timeScale

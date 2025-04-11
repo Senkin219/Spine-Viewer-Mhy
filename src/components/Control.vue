@@ -88,6 +88,18 @@
             </ol>
         </div>
         <div class="row">
+            <span title="Physics Constraints">物理约束</span>
+            <ol class="option-bar">
+                <li v-for="(alias, mode) in ['Off', 'On']">
+                    <input type="radio" name="enablePhysics"
+                           :id="'enablePhysics-' + alias" :value="mode"
+                           v-model.number="data.enablePhysics"
+                           class="list-option">
+                    <label :for="'enablePhysics-' + alias" class="mode-radio">{{ alias }}</label>
+                </li>
+            </ol>
+        </div>
+        <div class="row">
             <button @click="resetPosition" style="width: 80px" title="Reset Position">
                 {{ $t('control.resetPosition') }}
             </button>

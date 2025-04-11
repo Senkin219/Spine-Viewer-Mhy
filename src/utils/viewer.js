@@ -80,6 +80,23 @@ export class Container {
                     this.data._alphaMode = value
                 }
             }),
+            _scaleMode: -1,
+            scaleMode: computed({
+                get: () => {
+                    return this.data._scaleMode
+                },
+                set: (value) => {
+                    if (value === -1) {
+                        this.setFilters()
+                    } else {
+                        this.textures.forEach(t => {
+                            t.scaleMode = value
+                            // t.update()
+                        })
+                    }
+                    this.data._scaleMode = value
+                }
+            }),
             _autobone: 1,
             autobone: computed({
                 get: () => {
@@ -104,21 +121,16 @@ export class Container {
                     this.data._disableSlotColor = value
                 }
             }),
-            _scaleMode: -1,
-            scaleMode: computed({
+            _enablePhysics: 1,
+            enablePhysics: computed({
                 get: () => {
-                    return this.data._scaleMode
+                    return this.data._enablePhysics
                 },
                 set: (value) => {
-                    if (value === -1) {
-                        this.setFilters()
-                    } else {
-                        this.textures.forEach(t => {
-                            t.scaleMode = value
-                            // t.update()
-                        })
-                    }
-                    this.data._scaleMode = value
+                    this.stage.children.forEach(a => {
+                        a.enablePhysics = value
+                    })
+                    this.data._enablePhysics = value
                 }
             }),
             skins: [],
