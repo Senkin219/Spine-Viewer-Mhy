@@ -11,16 +11,11 @@ export class SpineMhy extends Spine {
         this.autoSlot = Object.values(skeletonData.extraSlot || {}).map(value => {
             return new AutoSlot(value, this);
         });
-        this.skeleton.time = 0;
     }
     autobone = 1;
     disableSlotColor = 1;
     autoBoneTime = 0;
-    enablePhysics = 1;
     update(dt) {
-        if (this.enablePhysics == 1) {
-            this.skeleton.time = this.skeleton.time + dt * this.state.timeScale;
-        }
         if (this.autobone == 1) {
             let i = 1;
             let a = null;

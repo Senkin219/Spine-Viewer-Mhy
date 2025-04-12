@@ -105,30 +105,7 @@ app.whenReady().then(() => {
         try {
             const fileContent = fs.readFileSync(filePath)
             const mimeType = mime.getType(filePath)
-            if (filePath.endsWith('.json')) {
-                const jsonObject = JSON.parse(fileContent)
-                if (jsonObject.hasOwnProperty('skeleton') && jsonObject.skeleton.spine.substr(0, 3) === '4.2') {
-                    jsonObject.skeleton.spine = '4.1-force-load'
-                    jsonObject.bones.forEach(bone => {
-                        if (bone.hasOwnProperty('inherit')) {
-                            bone.transform = bone.inherit
-                        }
-                    })
-                    if (jsonObject.hasOwnProperty('physics')) {
-                        jsonObject.physics.forEach(constraint => {
-                            const sortViaTransform = { 'name': `physics-${constraint.name}`, 'order': constraint.order, 'bones': [constraint.bone], 'target': constraint.bone, 'mixRotate': 0, 'mixX': 0, 'mixY': 0, 'mixScaleX': 0, 'mixScaleY': 0, 'mixShearY': 0 }
-                            if (!jsonObject.hasOwnProperty('transform')) {
-                                jsonObject.transform = []
-                            }
-                            jsonObject.transform.push(sortViaTransform)
-                        })
-                    }
-                }
-                jsonContent = JSON.stringify(jsonObject)
-                return new Response(jsonContent, {
-                    headers: { 'Content-Type': 'application/json' }
-                })
-            } else if (filePath.endsWith('.tga')) {
+            if (filePath.endsWith('.tga')) {
                 const pngBuffer = await tga2png(filePath)
                 return new Response(pngBuffer, {
                     headers: { 'Content-Type': 'image/png' }

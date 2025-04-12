@@ -160,7 +160,22 @@ export class PhysicsConstraint {
         }
     }
 
+    reset() {
+        this.remaining = 0;
+        this.lastTime = this.skeleton.time || 0;
+        this._reset = true;
+        this.xOffset = 0;
+        this.xVelocity = 0;
+        this.yOffset = 0;
+        this.yVelocity = 0;
+        this.rotateOffset = 0;
+        this.rotateVelocity = 0;
+        this.scaleOffset = 0;
+        this.scaleVelocity = 0;
+    }
+
     update() {
+        if (this.skeleton.enablePhysics === 0) this.reset();
         const bone = this.bone;
         bone.a = bone.matrix.a;
         bone.b = bone.matrix.c;
@@ -174,9 +189,9 @@ export class PhysicsConstraint {
         const x = this.data.x > 0, y = this.data.y > 0, rotateOrShearX = this.data.rotate > 0 || this.data.shearX > 0, scaleX = this.data.scaleX > 0;
         const l = bone.data.length;
         const skeleton = this.skeleton;
-        const delta = this.skeleton.time ? Math.max(this.skeleton.time - this.lastTime, 0) : 0;
+        const delta = Math.max((this.skeleton.time || 0) - this.lastTime, 0);
         this.remaining += delta;
-        this.lastTime = this.skeleton.time;
+        this.lastTime = this.skeleton.time || 0;
 
         const bx = bone.worldXData, by = bone.worldYData;
         if (this._reset) {
@@ -184,7 +199,7 @@ export class PhysicsConstraint {
             this.ux = bx;
             this.uy = by;
         } else {
-            let a = this.remaining, i = this.inertia, t = this.data.step, f = 100, d = -1;
+            let a = this.remaining, i = this.inertia, t = this.data.step, f = this.skeleton.data.referenceScale || 100, d = -1;
             let qx = this.data.limit * delta, qy = qx * Math.abs(skeleton.scaleY);
             qx *= Math.abs(skeleton.scaleX);
             if (x || y) {

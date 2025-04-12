@@ -128,7 +128,7 @@ export class Container {
                 },
                 set: (value) => {
                     this.stage.children.forEach(a => {
-                        a.enablePhysics = value
+                        a.skeleton.enablePhysics = value
                     })
                     this.data._enablePhysics = value
                 }
