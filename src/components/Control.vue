@@ -368,9 +368,7 @@ const playAnimationQueue = () => {
     active.stage.alpha = 1
     active.playAnimationQueue(() => {
         active.stage.alpha = 1
-        for (let i = 0; i < 7; i++) {
-            active.setEmptyAnimation(i, 0)
-        }
+        active.data.tracks.length = 0
     })
 }
 

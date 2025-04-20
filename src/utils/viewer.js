@@ -91,7 +91,7 @@ export class Container {
                     } else {
                         this.textures.forEach(t => {
                             t.scaleMode = value
-                            // t.update()
+                            t.update()
                         })
                     }
                     this.data._scaleMode = value
@@ -230,7 +230,7 @@ export class Container {
         for (let i = 0; i < 7; i++) {
             if (this.data.queue[i].length === 0) continue
             const totalDuration = this.data.queue[i].reduce((d, a) => d + a.duration, 0) / this.data.timeScale
-            if (totalDuration > info.totalDuration) {
+            if (totalDuration >= info.totalDuration) {
                 info.trackIndex = i
                 info.animationNumber = this.data.queue[i].filter(a => a.name !== null && a.name !== undefined).length
                 info.totalDuration = totalDuration
@@ -239,7 +239,7 @@ export class Container {
         return info
     }
 
-    playAnimationQueue(onComplete = console.log) {
+    playAnimationQueue(onComplete = null) {
         const info = this.getQueueInfo()
         if (info.animationNumber === 0 || info.totalDuration === 0) return
         // TODO: clear existed track
@@ -259,14 +259,13 @@ export class Container {
                     this.addEmptyAnimation(i, this.data.defaultMix)
                     break
                 case undefined:
-                    let animationIndex = 0
                     const spineIndex = this.background ? 1 : 0
-                    this.stage.children[spineIndex].state.tracks[i].listener = {
-                        complete: () => {
-                            if (animationIndex++ === this.data.queue[i].length - 2) {
-                                this.stage.alpha = 0
-                                this.stage.children[spineIndex].state.tracks[i].listener = null
-                            }
+                    let lastEntry = this.stage.children[spineIndex].state.tracks[i]
+                    while (lastEntry.next) lastEntry = lastEntry.next
+                    lastEntry.listener = {
+                        complete: (entry) => {
+                            this.stage.alpha = 0
+                            entry.listener = null
                         }
                     }
                     break
@@ -275,15 +274,14 @@ export class Container {
                         this.addAnimation(i, lastAnimation, false)
                     }
             }
-            if (i === info.trackIndex) {
-                let animationIndex = 0
+            if (i === info.trackIndex && onComplete) {
                 const spineIndex = this.background ? 1 : 0
-                this.stage.children[spineIndex].state.tracks[i].listener = {
-                    complete: () => {
-                        if (++animationIndex === info.animationNumber) {
-                            onComplete()
-                            this.stage.children[spineIndex].state.tracks[i].listener = null
-                        }
+                let lastEntry = this.stage.children[spineIndex].state.tracks[i]
+                while (lastEntry.next) lastEntry = lastEntry.next
+                lastEntry.listener = {
+                    complete: (entry) => {
+                        onComplete()
+                        entry.listener = null
                     }
                 }
             }

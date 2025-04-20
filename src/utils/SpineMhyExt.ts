@@ -127,11 +127,20 @@ class AutoBone {
         if (typeof bone === 'undefined') {
             bone = this.rootBone;
         }
-        bone.worldX = bone.initWorldX;
-        bone.worldY = bone.initWorldY;
-        bone.scaleX = bone.initScaleX;
-        bone.scaleY = bone.initScaleY;
-        bone.rotation = bone.initRotation;
+        if (bone.matrix) {
+            bone.matrix.tx = bone.initWorldX;
+            bone.matrix.ty = bone.initWorldY;
+            bone.scaleX = bone.initScaleX;
+            bone.scaleY = bone.initScaleY;
+            bone.rotation = bone.initRotation;
+        }
+        else {
+            bone.worldX = bone.initWorldX;
+            bone.worldY = bone.initWorldY;
+            bone.scaleX = bone.initScaleX;
+            bone.scaleY = bone.initScaleY;
+            bone.rotation = bone.initRotation;
+        }
         if (!this.endBoneName.includes(bone.name)) {
             bone.children.forEach((child: any) => this.resetBone(child));
         }

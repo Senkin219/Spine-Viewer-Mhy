@@ -40,13 +40,13 @@ export default (appStore, pixiApp) => {
         }
         appStore.containers.forEach((c, i) => {
             const info = c.getQueueInfo()
-            if (info.totalDuration > standard.duration) {
+            if (info.totalDuration >= standard.duration) {
                 standard.index = i
                 standard.duration = info.totalDuration
             }
         })
         appStore.containers.forEach((c, i) => {
-            const callback = i === standard.index ? cancelAllHidden : console.log
+            const callback = i === standard.index ? cancelAllHidden : null
             c.playAnimationQueue(callback)
         })
     }
@@ -55,9 +55,6 @@ export default (appStore, pixiApp) => {
         appStore.containers.forEach(c => {
             c.stage.alpha = 1
             c.data.tracks.length = 0
-            for (let i = 0; i < 7; i++) {
-                c.setEmptyAnimation(i, 0)
-            }
         })
     }
 

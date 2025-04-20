@@ -95,7 +95,7 @@ const exportAnimation = () => {
     }
     appStore.containers.forEach((c, i) => {
         const info = c.getQueueInfo()
-        if (info.totalDuration > standard.duration) {
+        if (info.totalDuration >= standard.duration) {
             standard.index = i
             standard.duration = info.totalDuration
         }
@@ -116,37 +116,63 @@ const exportAnimation = () => {
     exportStore.setProgress(0, Math.floor(standard.duration / delta))
     exportStore.setStatus(t('export.rendering'))
 
-    ipcRenderer.invoke('prepare-export').then(() => {
-        appStore.containers.forEach((c, i) => {
-            const callback = i === standard.index ? onComplete : console.log
-            c.playAnimationQueue(callback)
-            c.update(0)
+    appStore.containers.forEach((c, i) => {
+        c.stage.children.forEach(a => {
+            a.autoBoneTime = 0
+            a.autoBone.forEach(bone => bone.reset())
+            a.skeleton.enablePhysics = (a.skeleton.enablePhysics === undefined || a.skeleton.enablePhysics) ? 0 : 1
         })
-        setTimeout(animate, 100)
+        c.playAnimationQueue(null)
+        c.update(0)
+        c.stage.children.forEach(a => {
+            a.skeleton.enablePhysics = a.skeleton.enablePhysics ? 0 : 1
+        })
     })
+
+    function preAnimate() {
+        if (exportStore.renderComplete()) {
+            appStore.containers.forEach((c, i) => {
+                c.stage.alpha = 1
+                const callback = i === standard.index ? cancelAllHidden : null
+                c.playAnimationQueue(callback)
+                c.update(0)
+            })
+            exportStore.setProgress(0);
+            ipcRenderer.invoke('prepare-export').then(() => {
+                animate()
+            })
+            return
+        }
+        exportStore.setProgress(exportStore.progress.current + 1)
+        appStore.containers.forEach(c => {
+            c.update(delta)
+        })
+        setImmediate(preAnimate)
+    }
+
+    setImmediate(preAnimate)
 
     function animate() {
         if (exportStore.renderComplete()) {
             ipcRenderer.invoke('compose', {format, framerate, filename, path})
             exportStore.setStatus(t('export.composing'))
             appStore.containers.forEach(c => {
-                c.update(standard.duration)
+                c.setAutoUpdate(true)
             })
             return
         }
         const index = exportStore.progress.current
         const imageData = pixiApp.view.toDataURL('image/png')
+        exportStore.setProgress(index + 1)
+        appStore.containers.forEach(c => {
+            c.update(delta)
+        })
         ipcRenderer.invoke('save-image-cache', {
             index: String(index).padStart(5, '0'),
             data: imageData
         }).then(() => {
-            exportStore.setProgress(index + 1)
-            appStore.containers.forEach(c => {
-                c.update(delta)
-            })
             animate()
         })
-
     }
 
     function onComplete() {
