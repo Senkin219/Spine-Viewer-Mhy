@@ -57,9 +57,11 @@ const selectExportPath = async () => {
 }
 
 const formats = {
-    'GIF': 'GIF',
     'MP4': 'MP4',
-    'GIF-HQ': 'GIF (HQ)',
+    'GIF': 'GIF',
+    'GIF-D': 'GIF (Dithering)',
+    'Webp': 'Webp',
+    'Webp-LL': 'Webp (Lossless)',
     'PNG-SEQ': 'PNG Sequence',
     'WEBM-VP9': 'WebM'
 }

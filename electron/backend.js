@@ -182,11 +182,17 @@ app.whenReady().then(() => {
             case 'MP4':
                 ffmpegArgs.push(...['-vf', 'crop=if(mod(iw\\,2)\\,iw-1\\,iw):if(mod(ih\\,2)\\,ih-1\\,ih)', '-crf', '17', '-pix_fmt', 'yuv420p', `${outputPath}.mp4`])
                 break
-            case 'GIF-HQ':
+            case 'GIF':
+                ffmpegArgs.push(...['-vf', 'split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse=dither=none', `${outputPath}.gif`])
+                break
+            case 'GIF-D':
                 ffmpegArgs.push(...['-vf', 'split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse', `${outputPath}.gif`])
                 break
-            case 'GIF':
-                ffmpegArgs.push(`${outputPath}.gif`)
+            case 'Webp':
+                ffmpegArgs.push(...['-c:v', 'libwebp_anim', '-quality', '95', `${outputPath}.webp`])
+                break
+            case 'Webp-LL':
+                ffmpegArgs.push(...['-c:v', 'libwebp_anim', '-lossless', '1', `${outputPath}.webp`])
                 break
             case 'PNG-SEQ':
                 if (fs.existsSync(outputPath)) {
