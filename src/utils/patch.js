@@ -50,8 +50,11 @@ SpineParser.prototype.createJsonParser = function() {
 
 const update = Spine.prototype.update;
 Spine.prototype.update = function (dt) {
-    this.skeleton.time = (this.skeleton.time || 0) + dt * this.state.timeScale;
+    if (this.skeleton.enablePhysics !== 0) {
+        this.skeleton.time = (this.skeleton.time || 0) + dt * this.state.timeScale;
+    }
     update.call(this, dt);
+    this.skeleton.resetPhysics = 0;
 }
 
 const sortTransformConstraint = spine41.Skeleton.prototype.sortTransformConstraint;

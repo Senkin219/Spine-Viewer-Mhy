@@ -12,11 +12,18 @@ export class SpineMhy extends Spine {
             return new AutoSlot(value, this);
         });
     }
-    autobone = 1;
+    enableAutoBone = 1;
     disableSlotColor = 1;
     autoBoneTime = 0;
+    resetAutoBone = 0;
     update(dt) {
-        if (this.autobone == 1) {
+        if (this.resetAutoBone === 1) {
+            this.autoBoneTime = 0;
+            this.autoBone.forEach(bone => bone.reset());
+            this.autoSlot.forEach(slot => slot.render(this.autoBoneTime));
+            this.resetAutoBone = 0;
+        }
+        else if (this.enableAutoBone == 1) {
             let i = 1;
             let a = null;
             this.autoBoneTime = this.autoBoneTime + dt * this.autoBoneSpeed.timeScale * this.state.timeScale;

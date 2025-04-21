@@ -97,16 +97,16 @@ export class Container {
                     this.data._scaleMode = value
                 }
             }),
-            _autobone: 1,
-            autobone: computed({
+            _enableAutoBone: 1,
+            enableAutoBone: computed({
                 get: () => {
-                    return this.data._autobone
+                    return this.data._enableAutoBone
                 },
                 set: (value) => {
                     this.stage.children.forEach(a => {
-                        a.autobone = value
+                        a.enableAutoBone = value
                     })
-                    this.data._autobone = value
+                    this.data._enableAutoBone = value
                 }
             }),
             _disableSlotColor: 1,
@@ -318,5 +318,19 @@ export class Container {
 
     clearQueue(trackIndex) {
         this.data.queue[trackIndex] = []
+    }
+
+    resetAutoBone() {
+        this.stage.children.forEach(a => {
+            a.resetAutoBone = 1;
+        })
+        this.data.enableAutoBone = 0;
+    }
+
+    resetPhysics() {
+        this.stage.children.forEach(a => {
+            a.skeleton.resetPhysics = 1;
+        })
+        this.data.enablePhysics = 0;
     }
 }

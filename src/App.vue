@@ -101,7 +101,7 @@ const exportAnimation = () => {
         }
     })
 
-    let {format, framerate, filename, path} = exportStore.options
+    let {format, framerate, pretimes, filename, path} = exportStore.options
 
     if (!standard.duration || !path) return
 
@@ -113,31 +113,35 @@ const exportAnimation = () => {
     const delta = 1 / framerate
 
     exportStore.running = true
-    exportStore.setProgress(0, Math.floor(standard.duration / delta))
+    exportStore.setProgress(Math.floor(standard.duration / delta), Math.floor(standard.duration / delta))
     exportStore.setStatus(t('export.rendering'))
 
     appStore.containers.forEach((c, i) => {
         c.stage.children.forEach(a => {
-            a.autoBoneTime = 0
-            a.autoBone.forEach(bone => bone.reset())
-            a.skeleton.enablePhysics = (a.skeleton.enablePhysics === undefined || a.skeleton.enablePhysics) ? 0 : 1
-        })
-        c.playAnimationQueue(null)
-        c.update(0)
-        c.stage.children.forEach(a => {
-            a.skeleton.enablePhysics = a.skeleton.enablePhysics ? 0 : 1
+            a.resetAutoBone = 1
+            a.skeleton.resetPhysics = 1
         })
     })
 
     function preAnimate() {
         if (exportStore.renderComplete()) {
+            exportStore.setProgress(0)
+            if (!Number.isNaN(pretimes) && pretimes > 0) {
+                pretimes -= 1
+                appStore.containers.forEach((c, i) => {
+                    c.stage.alpha = 1
+                    c.playAnimationQueue(null)
+                    c.update(0)
+                })
+                setImmediate(preAnimate)
+                return
+            }
             appStore.containers.forEach((c, i) => {
                 c.stage.alpha = 1
                 const callback = i === standard.index ? cancelAllHidden : null
                 c.playAnimationQueue(callback)
                 c.update(0)
             })
-            exportStore.setProgress(0);
             ipcRenderer.invoke('prepare-export').then(() => {
                 animate()
             })
@@ -157,7 +161,10 @@ const exportAnimation = () => {
             ipcRenderer.invoke('compose', {format, framerate, filename, path})
             exportStore.setStatus(t('export.composing'))
             appStore.containers.forEach(c => {
+                let timeScale = c.data.timeScale;
+                c.data.timeScale = 0;
                 c.setAutoUpdate(true)
+                setTimeout(() => c.data.timeScale = timeScale, 100);
             })
             return
         }
@@ -166,6 +173,7 @@ const exportAnimation = () => {
         exportStore.setProgress(index + 1)
         appStore.containers.forEach(c => {
             c.update(delta)
+            c.update(0)
         })
         ipcRenderer.invoke('save-image-cache', {
             index: String(index).padStart(5, '0'),
@@ -216,7 +224,7 @@ function loadFiles(fileUrls) {
 function onLoaded(loader, res) {
     const activeContainer = appStore.getActive()
 
-    const {alphaMode, scaleMode, zoom, timeScale, defaultMix, position, autobone, disableSlotColor, enablePhysics} = activeContainer.data
+    const {alphaMode, scaleMode, zoom, timeScale, defaultMix, position, enableAutoBone, disableSlotColor, enablePhysics} = activeContainer.data
     const {skins, animations, slots} = toRefs(activeContainer.data)
 
     const newSkins = appStore.superposition ? [...skins.value] : []
@@ -242,7 +250,7 @@ function onLoaded(loader, res) {
                 res[key].spineData.extraConfig = res[key].data.extraConfig || {}
                 res[key].spineData.extraSlot = res[key].data.extraSlot || {}
                 const skeletonAnimation = new Spine(res[key].spineData)
-                skeletonAnimation.autobone = autobone
+                skeletonAnimation.enableAutoBone = enableAutoBone
                 skeletonAnimation.disableSlotColor = disableSlotColor
                 skeletonAnimation.skeleton.enablePhysics = enablePhysics
                 skeletonAnimation.position.set(position.x, position.y)

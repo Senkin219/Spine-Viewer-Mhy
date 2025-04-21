@@ -65,15 +65,29 @@
         </div>
         <div class="row">
             <span title="AutoBone">AutoBone</span>
-            <ol class="option-bar">
+            <ol class="option-bar" style="margin-left: auto;">
                 <li v-for="(alias, mode) in ['Off', 'On']">
-                    <input type="radio" name="autobone"
-                           :id="'autobone-' + alias" :value="mode"
-                           v-model.number="data.autobone"
+                    <input type="radio" name="enableAutoBone"
+                           :id="'enableAutoBone-' + alias" :value="mode"
+                           v-model.number="data.enableAutoBone"
                            class="list-option">
-                    <label :for="'autobone-' + alias" class="mode-radio">{{ alias }}</label>
+                    <label :for="'enableAutoBone-' + alias" class="mode-radio">{{ alias }}</label>
                 </li>
             </ol>
+            <button @click="appStore.getActive().resetAutoBone()" title="Reset">{{ $t('control.reset') }}</button>
+        </div>
+        <div class="row">
+            <span title="Physics Constraints">物理约束</span>
+            <ol class="option-bar" style="margin-left: auto;">
+                <li v-for="(alias, mode) in ['Off', 'On']">
+                    <input type="radio" name="enablePhysics"
+                           :id="'enablePhysics-' + alias" :value="mode"
+                           v-model.number="data.enablePhysics"
+                           class="list-option">
+                    <label :for="'enablePhysics-' + alias" class="mode-radio">{{ alias }}</label>
+                </li>
+            </ol>
+            <button @click="appStore.getActive().resetPhysics()" title="Reset">{{ $t('control.reset') }}</button>
         </div>
         <div class="row">
             <span title="Disable Slot Color">禁用Slot颜色</span>
@@ -84,18 +98,6 @@
                            v-model.number="data.disableSlotColor"
                            class="list-option">
                     <label :for="'disableSlotColor-' + alias" class="mode-radio">{{ alias }}</label>
-                </li>
-            </ol>
-        </div>
-        <div class="row">
-            <span title="Physics Constraints">物理约束</span>
-            <ol class="option-bar">
-                <li v-for="(alias, mode) in ['Off', 'On']">
-                    <input type="radio" name="enablePhysics"
-                           :id="'enablePhysics-' + alias" :value="mode"
-                           v-model.number="data.enablePhysics"
-                           class="list-option">
-                    <label :for="'enablePhysics-' + alias" class="mode-radio">{{ alias }}</label>
                 </li>
             </ol>
         </div>

@@ -4,6 +4,7 @@
             <div class="export-option label">
                 <label for="export-format" title="Output format">{{ $t('export.outputFormat') }}:&nbsp;&nbsp;</label>
                 <label for="export-framerate" title="Framerate">{{ $t('export.framerate') }}:&nbsp;&nbsp;</label>
+                <label for="export-pretimes" title="Framerate">预渲染次数:&nbsp;&nbsp;</label>
                 <label for="export-filename" title="Filename">{{ $t('export.filename') }}:&nbsp;&nbsp;</label>
                 <label for="export-path" title="Output directory">
                     {{ $t('export.outputDirectory') }}:&nbsp;&nbsp;
@@ -16,6 +17,9 @@
                 <input type="number" min="1" max="60"
                        v-model.number="store.options.framerate"
                        id="export-framerate">
+                <input type="number" min="0" max="10"
+                       v-model.number="store.options.pretimes"
+                       id="export-pretimes">
                 <input type="text" id="export-filename" v-model="store.options.filename" placeholder="output"
                        spellcheck="false">
                 <span class="path-select">

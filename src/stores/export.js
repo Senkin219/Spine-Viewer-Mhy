@@ -10,6 +10,7 @@ export const useExportStore = defineStore('export', () => {
     let options = reactive({
         format: 'GIF-HQ',
         framerate: 24,
+        pretimes: 1,
         filename: 'output',
         path: '',
     })

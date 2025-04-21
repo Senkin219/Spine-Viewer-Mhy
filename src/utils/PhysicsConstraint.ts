@@ -175,7 +175,7 @@ export class PhysicsConstraint {
     }
 
     update() {
-        if (this.skeleton.enablePhysics === 0) this.reset();
+        if (this.skeleton.resetPhysics === 1) this.reset();
         const bone = this.bone;
         bone.a = bone.matrix.a;
         bone.b = bone.matrix.c;
@@ -233,7 +233,8 @@ export class PhysicsConstraint {
                 if (x) bone.worldXData += this.xOffset * mix * this.data.x;
                 if (y) bone.worldYData += this.yOffset * mix * this.data.y;
             }
-            if (rotateOrShearX || scaleX) {
+            //different from official runtime
+            if ((rotateOrShearX || scaleX) && delta > 0) {
                 let ca = Math.atan2(bone.c, bone.a), c = 0, s = 0, mr = 0;
                 let dx = this.cx - bone.worldXData, dy = this.cy - bone.worldYData;
                 if (dx > qx)
