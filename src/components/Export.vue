@@ -4,7 +4,7 @@
             <div class="export-option label">
                 <label for="export-format" title="Output format">{{ $t('export.outputFormat') }}:&nbsp;&nbsp;</label>
                 <label for="export-framerate" title="Framerate">{{ $t('export.framerate') }}:&nbsp;&nbsp;</label>
-                <label for="export-pretimes" title="Framerate">预渲染次数:&nbsp;&nbsp;</label>
+                <label for="export-preRender" title="Framerate">预渲染次数:&nbsp;&nbsp;</label>
                 <label for="export-filename" title="Filename">{{ $t('export.filename') }}:&nbsp;&nbsp;</label>
                 <label for="export-path" title="Output directory">
                     {{ $t('export.outputDirectory') }}:&nbsp;&nbsp;
@@ -14,12 +14,20 @@
                 <select id="export-format" v-model="store.options.format">
                     <option v-for="(desc, option) in formats" :value="option">{{ desc }}</option>
                 </select>
-                <input type="number" min="1" max="60"
-                       v-model.number="store.options.framerate"
-                       id="export-framerate">
+                <div style="display: table;">
+                    <input type="number" min="1" max="60"
+                        v-model.number="store.options.framerate"
+                        id="export-framerate">
+                    <label>&nbsp;&nbsp;保留最后一帧:&nbsp;&nbsp;</label>
+                    <input type="checkbox"
+                            v-model="store.options.keepLastFrame"
+                            title="循环动画不建议保留最后一帧"
+                            style="vertical-align: middle;transform: scale(1.5);"
+                            id="export-keepLastFrame">
+                </div>
                 <input type="number" min="0" max="10"
-                       v-model.number="store.options.pretimes"
-                       id="export-pretimes">
+                       v-model.number="store.options.preRender"
+                       id="export-preRender">
                 <input type="text" id="export-filename" v-model="store.options.filename" placeholder="output"
                        spellcheck="false">
                 <span class="path-select">

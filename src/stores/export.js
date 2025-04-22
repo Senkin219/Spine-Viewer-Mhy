@@ -3,6 +3,9 @@ import {reactive, ref, watch} from "vue";
 
 import i18n from "@/utils/lang";
 
+const os = require('os');
+const path = require('path');
+
 export const useExportStore = defineStore('export', () => {
     let display = ref(false)
     let running = ref(false)
@@ -10,9 +13,10 @@ export const useExportStore = defineStore('export', () => {
     let options = reactive({
         format: 'Webp',
         framerate: 24,
-        pretimes: 1,
+        keepLastFrame: false,
+        preRender: 1,
         filename: 'output',
-        path: '',
+        path: path.join(os.homedir(), 'Desktop'),
     })
     let progress = reactive({
         current: 0,

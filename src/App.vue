@@ -101,7 +101,7 @@ const exportAnimation = () => {
         }
     })
 
-    let {format, framerate, pretimes, filename, path} = exportStore.options
+    let {format, framerate, keepLastFrame, preRender, filename, path} = exportStore.options
 
     if (!standard.duration || !path) return
 
@@ -126,8 +126,8 @@ const exportAnimation = () => {
     function preAnimate() {
         if (exportStore.renderComplete()) {
             exportStore.setProgress(0)
-            if (!Number.isNaN(pretimes) && pretimes > 0) {
-                pretimes -= 1
+            if (!Number.isNaN(preRender) && preRender > 0) {
+                preRender -= 1
                 appStore.containers.forEach((c, i) => {
                     c.stage.alpha = 1
                     c.playAnimationQueue(null)
@@ -158,7 +158,18 @@ const exportAnimation = () => {
 
     function animate() {
         if (exportStore.renderComplete()) {
-            ipcRenderer.invoke('compose', {format, framerate, filename, path})
+            if (keepLastFrame) {
+                const index = exportStore.progress.current
+                const imageData = pixiApp.view.toDataURL('image/png')
+                ipcRenderer.invoke('save-image-cache', {
+                    index: String(index).padStart(5, '0'),
+                    data: imageData
+                }).then(() => {
+                    ipcRenderer.invoke('compose', {format, framerate, filename, path})
+                })
+            } else {
+                ipcRenderer.invoke('compose', {format, framerate, filename, path})
+            }
             exportStore.setStatus(t('export.composing'))
             appStore.containers.forEach(c => {
                 let timeScale = c.data.timeScale;
