@@ -43,7 +43,8 @@
     "preRenderCount": "预渲染次数",
     "preRenderCountTip": "使非硬编码动画衔接更流畅",
     "keepLastFrame": "保留最后一帧",
-    "keepLastFrameTip": "循环动画不建议保留最后一帧"
+    "keepLastFrameTip": "循环动画不建议保留最后一帧",
+    "flip": "翻转"
   },
   "globalSide": {
     "backgroundColor": "背景色",

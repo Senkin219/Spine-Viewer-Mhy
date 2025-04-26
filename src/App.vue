@@ -101,7 +101,7 @@ const exportAnimation = () => {
         }
     })
 
-    let {format, framerate, keepLastFrame, preRender, filename, path} = exportStore.options
+    let {format, flip, framerate, keepLastFrame, preRender, filename, path} = exportStore.options
 
     if (!standard.duration || !path) return
 
@@ -165,10 +165,10 @@ const exportAnimation = () => {
                     index: String(index).padStart(5, '0'),
                     data: imageData
                 }).then(() => {
-                    ipcRenderer.invoke('compose', {format, framerate, filename, path})
+                    ipcRenderer.invoke('compose', {format, flip, framerate, filename, path})
                 })
             } else {
-                ipcRenderer.invoke('compose', {format, framerate, filename, path})
+                ipcRenderer.invoke('compose', {format, flip, framerate, filename, path})
             }
             exportStore.setStatus(t('export.composing'))
             appStore.containers.forEach(c => {

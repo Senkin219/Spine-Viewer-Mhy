@@ -12,6 +12,7 @@ export const useExportStore = defineStore('export', () => {
     let status = ref()
     let options = reactive({
         format: 'Webp',
+        flip: false,
         framerate: 24,
         keepLastFrame: false,
         preRender: 1,

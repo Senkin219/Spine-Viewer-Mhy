@@ -180,19 +180,19 @@ app.whenReady().then(() => {
         const ffmpegArgs = ['-y', '-r', options.framerate.toString(), '-i', inputPath]
         switch (options.format) {
             case 'MP4':
-                ffmpegArgs.push(...['-vf', 'crop=if(mod(iw\\,2)\\,iw-1\\,iw):if(mod(ih\\,2)\\,ih-1\\,ih)', '-crf', '17', '-pix_fmt', 'yuv420p', `${outputPath}.mp4`])
+                ffmpegArgs.push(...['-vf', `${options.flip?'hflip,':''}`+'crop=if(mod(iw\\,2)\\,iw-1\\,iw):if(mod(ih\\,2)\\,ih-1\\,ih)', '-crf', '17', '-pix_fmt', 'yuv420p', `${outputPath}.mp4`])
                 break
             case 'GIF':
-                ffmpegArgs.push(...['-vf', 'split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse=dither=none', `${outputPath}.gif`])
+                ffmpegArgs.push(...['-vf', `${options.flip?'hflip,':''}`+'split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse=dither=none', `${outputPath}.gif`])
                 break
             case 'GIF-D':
-                ffmpegArgs.push(...['-vf', 'split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse', `${outputPath}.gif`])
+                ffmpegArgs.push(...['-vf', `${options.flip?'hflip,':''}`+'split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse', `${outputPath}.gif`])
                 break
             case 'Webp':
-                ffmpegArgs.push(...['-c:v', 'libwebp_anim', '-quality', '95', `${outputPath}.webp`])
+                ffmpegArgs.push(...['-c:v', 'libwebp_anim', '-vf', `${options.flip?'hflip,':''}`+'null', '-quality', '95', `${outputPath}.webp`])
                 break
             case 'Webp-LL':
-                ffmpegArgs.push(...['-c:v', 'libwebp_anim', '-lossless', '1', `${outputPath}.webp`])
+                ffmpegArgs.push(...['-c:v', 'libwebp_anim', '-vf', `${options.flip?'hflip,':''}`+'null', '-lossless', '1', `${outputPath}.webp`])
                 break
             case 'PNG-SEQ':
                 if (fs.existsSync(outputPath)) {
@@ -205,7 +205,7 @@ app.whenReady().then(() => {
                 })
                 return
             case 'WEBM-VP9':
-                ffmpegArgs.push(...['-c:v', 'libvpx-vp9', '-pix_fmt', 'yuva420p', '-auto-alt-ref', '0', '-crf', '17', `${outputPath}.webm`])
+                ffmpegArgs.push(...['-c:v', 'libvpx-vp9', '-vf', `${options.flip?'hflip,':''}`+'null', '-pix_fmt', 'yuva420p', '-auto-alt-ref', '0', '-crf', '17', `${outputPath}.webm`])
                 break
             default:
                 break

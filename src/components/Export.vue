@@ -11,10 +11,19 @@
                 </label>
             </div>
             <div class="export-option input">
-                <select id="export-format" v-model="store.options.format">
-                    <option v-for="(desc, option) in formats" :value="option">{{ desc }}</option>
-                </select>
-                <div style="display: table;">
+                <div style="display: flex; flex-wrap: wrap; margin-bottom: 10px;">
+                    <select id="export-format" v-model="store.options.format">
+                        <option v-for="(desc, option) in formats" :value="option">{{ desc }}</option>
+                    </select>
+                    <label v-if="store.options.format !== 'PNG-SEQ'">&nbsp;&nbsp;{{ $t('export.flip') }}:&nbsp;&nbsp;</label>
+                    <input type="checkbox"
+                            v-model="store.options.flip"
+                            title="Flip Horizontal"
+                            style="vertical-align: middle;transform: scale(1.5);"
+                            id="export-flip"
+                            v-if="store.options.format !== 'PNG-SEQ'">
+                </div>
+                <div style="display: flex; flex-wrap: wrap; margin-bottom: 10px;">
                     <input type="number" min="1" max="60"
                         v-model.number="store.options.framerate"
                         id="export-framerate">
