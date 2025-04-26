@@ -1,7 +1,7 @@
 <template>
     <header id="header">
     <span class="title icon">
-        <img src="../assets/image/otogi.ico" alt="">
+        <img src="../assets/image/xgw.ico" alt="">
         Spine Viewer
     </span>
         <button class="control-button minimize" @click="minimize">一</button>
