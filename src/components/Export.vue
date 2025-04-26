@@ -4,7 +4,7 @@
             <div class="export-option label">
                 <label for="export-format" title="Output format">{{ $t('export.outputFormat') }}:&nbsp;&nbsp;</label>
                 <label for="export-framerate" title="Framerate">{{ $t('export.framerate') }}:&nbsp;&nbsp;</label>
-                <label for="export-preRender" title="Framerate">预渲染次数:&nbsp;&nbsp;</label>
+                <label for="export-preRender" :title="$t('export.preRenderCountTip')">{{ $t('export.preRenderCount') }}:&nbsp;&nbsp;</label>
                 <label for="export-filename" title="Filename">{{ $t('export.filename') }}:&nbsp;&nbsp;</label>
                 <label for="export-path" title="Output directory">
                     {{ $t('export.outputDirectory') }}:&nbsp;&nbsp;
@@ -18,10 +18,10 @@
                     <input type="number" min="1" max="60"
                         v-model.number="store.options.framerate"
                         id="export-framerate">
-                    <label>&nbsp;&nbsp;保留最后一帧:&nbsp;&nbsp;</label>
+                    <label>&nbsp;&nbsp;{{ $t('export.keepLastFrame') }}:&nbsp;&nbsp;</label>
                     <input type="checkbox"
                             v-model="store.options.keepLastFrame"
-                            title="循环动画不建议保留最后一帧"
+                            :title="$t('export.keepLastFrameTip')"
                             style="vertical-align: middle;transform: scale(1.5);"
                             id="export-keepLastFrame">
                 </div>

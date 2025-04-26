@@ -64,7 +64,7 @@
             </ol>
         </div>
         <div class="row">
-            <span title="AutoBone">AutoBone</span>
+            <span title="AutoBone">{{ $t('control.autoBone') }}</span>
             <ol class="option-bar" style="margin-left: auto;">
                 <li v-for="(alias, mode) in ['Off', 'On']">
                     <input type="radio" name="enableAutoBone"
@@ -77,7 +77,7 @@
             <button @click="appStore.getActive().resetAutoBone()" title="Reset">{{ $t('control.reset') }}</button>
         </div>
         <div class="row">
-            <span title="Physics Constraints">物理约束</span>
+            <span title="Physics Constraints">{{ $t('control.physicsConstraints') }}</span>
             <ol class="option-bar" style="margin-left: auto;">
                 <li v-for="(alias, mode) in ['Off', 'On']">
                     <input type="radio" name="enablePhysics"
@@ -90,7 +90,7 @@
             <button @click="appStore.getActive().resetPhysics()" title="Reset">{{ $t('control.reset') }}</button>
         </div>
         <div class="row">
-            <span title="Disable Slot Color">禁用Slot颜色</span>
+            <span title="Disable Slot Color">{{ $t('control.disableSlotColor') }}</span>
             <ol class="option-bar">
                 <li v-for="(alias, mode) in ['Off', 'On']">
                     <input type="radio" name="disableSlotColor"

@@ -24,7 +24,10 @@
     "clearCurrentTrack": "Clear track",
     "addEmptyAnimation": "Add empty",
     "addHiddenAnimation": "Add hidden",
-    "slot": "Slot"
+    "slot": "Slot",
+    "autoBone": "AutoBone",
+    "physicsConstraints": "Physics Constraints",
+    "disableSlotColor": "Disable Slot Color"
   },
   "export": {
     "outputFormat": "Output format",
@@ -36,7 +39,11 @@
     "close": "Close",
     "export": "Export",
     "rendering": "Rendering",
-    "composing": "Composing"
+    "composing": "Composing",
+    "preRenderCount": "Pre-render Count",
+    "preRenderCountTip": "Make the transitions between non-hardcoded animations smoother.",
+    "keepLastFrame": "Keep Last Frame",
+    "keepLastFrameTip": "It is not recommended to keep the last frame for looping animations."
   },
   "globalSide": {
     "backgroundColor": "BG",
