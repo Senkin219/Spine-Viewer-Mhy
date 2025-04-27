@@ -16,6 +16,45 @@ export class SpineMhy extends Spine {
     disableSlotColor = 1;
     autoBoneTime = 0;
     resetAutoBone = 0;
+
+    alignAutoBone(time) {
+        const propertyNames = ["rotateTime", "scaleXTime", "scaleYTime", "moveXTime", "moveYTime", "rotateFreq", "scaleXFreq", "scaleYFreq", "moveXFreq", "moveYFreq"];
+        this.autoBone.forEach(bone => {
+            Object.values(bone.animation).forEach(anim => {
+                propertyNames.forEach(propertyName => {
+                    if (anim[propertyName]) {
+                        if (!anim["init" + propertyName]) anim["init" + propertyName] = anim[propertyName];
+                        let multiple = Math.round(time / anim["init" + propertyName]) || 1;
+                        anim[propertyName] = time / multiple;
+                    }
+                });
+                if (anim["windFreq"]) {
+                    if (!anim["initwindFreq"]) anim["initwindFreq"] = anim["windFreq"];
+                    let multiple = Math.round(time * anim["initwindFreq"]) || 1;
+                    anim["windFreq"] = multiple / time;
+                }
+                if (anim["rotateSpeed"]) {
+                    if (!anim["initrotateSpeed"]) anim["initrotateSpeed"] = anim["rotateSpeed"];
+                    let multiple = Math.round(time * anim["initrotateSpeed"]) || 1;
+                    anim["rotateSpeed"] = multiple / time;
+                }
+            });
+        });
+    }
+
+    unalignAutoBone() {
+        const propertyNames = ["rotateTime", "scaleXTime", "scaleYTime", "moveXTime", "moveYTime", "rotateFreq", "scaleXFreq", "scaleYFreq", "moveXFreq", "moveYFreq", "windFreq", "rotateSpeed"];
+        this.autoBone.forEach(bone => {
+            Object.values(bone.animation).forEach(anim => {
+                propertyNames.forEach(propertyName => {
+                    if (anim["init" + propertyName]) {
+                        anim[propertyName] = anim["init" + propertyName];
+                    }
+                });
+            });
+        });
+    }
+
     update(dt) {
         if (this.resetAutoBone === 1) {
             this.autoBoneTime = 0;
@@ -23,7 +62,7 @@ export class SpineMhy extends Spine {
             this.autoSlot.forEach(slot => slot.render(this.autoBoneTime));
             this.resetAutoBone = 0;
         }
-        else if (this.enableAutoBone == 1) {
+        else if (this.enableAutoBone == 1 && dt) {
             let i = 1;
             let a = null;
             this.autoBoneTime = this.autoBoneTime + dt * this.autoBoneSpeed.timeScale * this.state.timeScale;

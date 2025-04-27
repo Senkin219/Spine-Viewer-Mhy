@@ -44,7 +44,9 @@
     "preRenderCountTip": "使非硬编码动画衔接更流畅",
     "keepLastFrame": "保留最后一帧",
     "keepLastFrameTip": "循环动画不建议保留最后一帧",
-    "flip": "翻转"
+    "flip": "翻转",
+    "alignAutoBone": "AutoBone 循环对齐",
+    "alignAutoBoneTip": "调整 AutoBone 的循环时长，使导出动画的时长为其整数倍"
   },
   "globalSide": {
     "backgroundColor": "背景色",

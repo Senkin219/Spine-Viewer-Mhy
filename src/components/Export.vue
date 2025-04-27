@@ -17,26 +17,34 @@
                     </select>
                     <label v-if="store.options.format !== 'PNG-SEQ'">&nbsp;&nbsp;{{ $t('export.flip') }}:&nbsp;&nbsp;</label>
                     <input type="checkbox"
-                            v-model="store.options.flip"
-                            title="Flip Horizontal"
-                            style="vertical-align: middle;transform: scale(1.5);"
-                            id="export-flip"
-                            v-if="store.options.format !== 'PNG-SEQ'">
+                           v-model="store.options.flip"
+                           title="Flip Horizontal"
+                           style="vertical-align: middle;transform: scale(1.5);"
+                           id="export-flip"
+                           v-if="store.options.format !== 'PNG-SEQ'">
                 </div>
                 <div style="display: flex; flex-wrap: wrap; margin-bottom: 10px;">
                     <input type="number" min="1" max="60"
-                        v-model.number="store.options.framerate"
-                        id="export-framerate">
+                           v-model.number="store.options.framerate"
+                           id="export-framerate">
                     <label>&nbsp;&nbsp;{{ $t('export.keepLastFrame') }}:&nbsp;&nbsp;</label>
                     <input type="checkbox"
-                            v-model="store.options.keepLastFrame"
-                            :title="$t('export.keepLastFrameTip')"
-                            style="vertical-align: middle;transform: scale(1.5);"
-                            id="export-keepLastFrame">
+                           v-model="store.options.keepLastFrame"
+                           :title="$t('export.keepLastFrameTip')"
+                           style="vertical-align: middle;transform: scale(1.5);"
+                           id="export-keepLastFrame">
                 </div>
-                <input type="number" min="0" max="10"
-                       v-model.number="store.options.preRender"
-                       id="export-preRender">
+                <div style="display: flex; flex-wrap: wrap; margin-bottom: 10px;">
+                    <input type="number" min="0" max="10"
+                           v-model.number="store.options.preRender"
+                           id="export-preRender">
+                    <label>&nbsp;&nbsp;{{ $t('export.alignAutoBone') }}:&nbsp;&nbsp;</label>
+                    <input type="checkbox"
+                           v-model="store.options.align"
+                           :title="$t('export.alignAutoBoneTip')"
+                           style="vertical-align: middle;transform: scale(1.5);"
+                           id="export-align">
+                </div>
                 <input type="text" id="export-filename" v-model="store.options.filename" placeholder="output"
                        spellcheck="false">
                 <span class="path-select">

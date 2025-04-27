@@ -16,6 +16,7 @@ export const useExportStore = defineStore('export', () => {
         framerate: 24,
         keepLastFrame: false,
         preRender: 1,
+        align: false,
         filename: 'output',
         path: path.join(os.homedir(), 'Desktop'),
     })

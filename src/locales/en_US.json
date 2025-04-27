@@ -44,7 +44,9 @@
     "preRenderCountTip": "Make the transitions between non-hardcoded animations smoother.",
     "keepLastFrame": "Keep Last Frame",
     "keepLastFrameTip": "It is not recommended to keep the last frame for looping animations.",
-    "flip": "Flip"
+    "flip": "Flip",
+    "alignAutoBone": "Align AutoBone",
+    "alignAutoBoneTip": "Adjust the AutoBone loop duration so that the exported animation length is an integer multiple of it."
   },
   "globalSide": {
     "backgroundColor": "BG",

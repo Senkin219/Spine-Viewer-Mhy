@@ -101,7 +101,7 @@ const exportAnimation = () => {
         }
     })
 
-    let {format, flip, framerate, keepLastFrame, preRender, filename, path} = exportStore.options
+    let {format, flip, framerate, keepLastFrame, preRender, align, filename, path} = exportStore.options
 
     if (!standard.duration || !path) return
 
@@ -120,6 +120,7 @@ const exportAnimation = () => {
         c.stage.children.forEach(a => {
             a.resetAutoBone = 1
             a.skeleton.resetPhysics = 1
+            if (align) a.alignAutoBone(standard.duration)
         })
     })
 
@@ -150,6 +151,7 @@ const exportAnimation = () => {
         exportStore.setProgress(exportStore.progress.current + 1)
         appStore.containers.forEach(c => {
             c.update(delta)
+            c.update(0)
         })
         setImmediate(preAnimate)
     }
@@ -172,6 +174,9 @@ const exportAnimation = () => {
             }
             exportStore.setStatus(t('export.composing'))
             appStore.containers.forEach(c => {
+                c.stage.children.forEach(a => {
+                    if (align) a.unalignAutoBone()
+                })
                 let timeScale = c.data.timeScale;
                 c.data.timeScale = 0;
                 c.setAutoUpdate(true)
