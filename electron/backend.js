@@ -189,10 +189,10 @@ app.whenReady().then(() => {
                 ffmpegArgs.push(...['-vf', `${options.flip?'hflip,':''}`+'split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse', `${outputPath}.gif`])
                 break
             case 'Webp':
-                ffmpegArgs.push(...['-c:v', 'libwebp_anim', '-vf', `${options.flip?'hflip,':''}`+'null', '-quality', '95', `${outputPath}.webp`])
+                ffmpegArgs.push(...['-c:v', 'libwebp_anim', '-vf', `${options.flip?'hflip,':''}`+'null', '-quality', '95', '-loop', '0', `${outputPath}.webp`])
                 break
             case 'Webp-LL':
-                ffmpegArgs.push(...['-c:v', 'libwebp_anim', '-vf', `${options.flip?'hflip,':''}`+'null', '-lossless', '1', `${outputPath}.webp`])
+                ffmpegArgs.push(...['-c:v', 'libwebp_anim', '-vf', `${options.flip?'hflip,':''}`+'null', '-lossless', '1', '-loop', '0', `${outputPath}.webp`])
                 break
             case 'PNG-SEQ':
                 if (fs.existsSync(outputPath)) {
