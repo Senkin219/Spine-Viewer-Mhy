@@ -53,7 +53,8 @@
                 <li v-for="(mode, alias) in {
                     Auto: -1,
                     Nearest: SCALE_MODES.NEAREST,
-                    Linear: SCALE_MODES.LINEAR
+                    Linear: SCALE_MODES.LINEAR,
+                    Mipmap: 2
                 }">
                     <input type="radio" name="scale-mode"
                            :id="alias" :value="mode"

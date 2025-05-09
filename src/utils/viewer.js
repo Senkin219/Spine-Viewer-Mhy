@@ -87,10 +87,15 @@ export class Container {
                 },
                 set: (value) => {
                     if (value === -1) {
+                        this.textures.forEach(t => {
+                            t.mipmap = 0
+                            t.update()
+                        })
                         this.setFilters()
                     } else {
                         this.textures.forEach(t => {
-                            t.scaleMode = value
+                            t.scaleMode = Math.min(value, 1)
+                            t.mipmap = value === 2 ? 2 : 0
                             t.update()
                         })
                     }

@@ -259,7 +259,10 @@ function onLoaded(loader, res) {
                 newAtlases.push(res[key].spineAtlas)
                 res[key].spineAtlas.pages.forEach(p => {
                     p.baseTexture.alphaMode = alphaMode
-                    if (scaleMode !== -1) p.baseTexture.scaleMode = scaleMode
+                    if (scaleMode !== -1) {
+                        p.baseTexture.scaleMode = Math.min(scaleMode, 1)
+                        p.baseTexture.mipmap = scaleMode === 2 ? 2 : 0
+                    }
                     newTextures.push(p.baseTexture)
                 });
                 res[key].spineData.extra = res[key].data.extra || {}
