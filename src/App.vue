@@ -240,7 +240,7 @@ function loadFiles(fileUrls) {
 function onLoaded(loader, res) {
     const activeContainer = appStore.getActive()
 
-    const {alphaMode, scaleMode, zoom, timeScale, defaultMix, position, enableAutoBone, disableSlotColor, enablePhysics} = activeContainer.data
+    const {alphaMode, scaleMode, mipmap, zoom, timeScale, defaultMix, position, enableAutoBone, disableSlotColor, enablePhysics} = activeContainer.data
     const {skins, animations, slots} = toRefs(activeContainer.data)
 
     const newSkins = appStore.superposition ? [...skins.value] : []
@@ -260,6 +260,7 @@ function onLoaded(loader, res) {
                 res[key].spineAtlas.pages.forEach(p => {
                     p.baseTexture.alphaMode = alphaMode
                     if (scaleMode !== -1) p.baseTexture.scaleMode = scaleMode
+                    if (mipmap !== 1) p.baseTexture.mipmap = mipmap
                     newTextures.push(p.baseTexture)
                 });
                 res[key].spineData.extra = res[key].data.extra || {}

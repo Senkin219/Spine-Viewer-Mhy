@@ -87,6 +87,7 @@ export class Container {
                 },
                 set: (value) => {
                     if (value === -1) {
+                        this.data.mipmap = 1
                         this.setFilters()
                     } else {
                         this.textures.forEach(t => {
@@ -95,6 +96,19 @@ export class Container {
                         })
                     }
                     this.data._scaleMode = value
+                }
+            }),
+            _mipmap: 1,
+            mipmap: computed({
+                get: () => {
+                    return this.data._mipmap
+                },
+                set: (value) => {
+                    this.textures.forEach(a => {
+                        a.mipmap = value
+                        a.update()
+                    })
+                    this.data._mipmap = value
                 }
             }),
             _enableAutoBone: 1,

@@ -64,6 +64,18 @@
             </ol>
         </div>
         <div class="row">
+            <span title="Mipmap">{{ $t('control.mipmap') }}</span>
+            <ol class="option-bar" style="margin-left: auto;">
+                <li v-for="(alias, mode) in ['Off', 'Pow2', 'On']">
+                    <input type="radio" name="mipmap"
+                           :id="'mipmap-' + alias" :value="mode"
+                           v-model.number="data.mipmap"
+                           class="list-option">
+                    <label :for="'mipmap-' + alias" class="mode-radio">{{ alias }}</label>
+                </li>
+            </ol>
+        </div>
+        <div class="row">
             <span title="AutoBone">{{ $t('control.autoBone') }}</span>
             <ol class="option-bar" style="margin-left: auto;">
                 <li v-for="(alias, mode) in ['Off', 'On']">

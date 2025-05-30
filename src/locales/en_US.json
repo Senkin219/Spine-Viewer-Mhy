@@ -27,7 +27,8 @@
     "slot": "Slot",
     "autoBone": "AutoBone",
     "physicsConstraints": "Physics Constraints",
-    "disableSlotColor": "Disable Slot Color"
+    "disableSlotColor": "Disable Slot Color",
+    "mipmap": "Mipmap"
   },
   "export": {
     "outputFormat": "Output format",

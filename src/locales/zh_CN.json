@@ -27,7 +27,8 @@
     "slot": "插槽",
     "autoBone": "AutoBone",
     "physicsConstraints": "物理约束",
-    "disableSlotColor": "禁用插槽颜色"
+    "disableSlotColor": "禁用插槽颜色",
+    "mipmap": "Mipmap"
   },
   "export": {
     "outputFormat": "导出格式",
