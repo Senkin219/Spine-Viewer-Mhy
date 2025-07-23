@@ -131,12 +131,24 @@
         </div>
 
         <div class="col">
-            <span class="animation-label" title="Skin">{{ $t('control.skin') }}</span>
+            <div class="row" style="width: 100%">
+                <span class="animation-label" title="Skin">{{ $t('control.skin') }}</span>
+                <span class="bg-wrap">
+                    <span title="Combination" style="white-space: nowrap">{{ $t('control.combination') }}</span>
+                    <span class="i-checkbox-wrap">
+                        <input type="checkbox" id="skip-combination" class="i-checkbox"
+                               :disabled="!canCombineSkin.value"
+                               v-model="appStore.active.container.skinCombination.value">
+                        <label for="skip-combination" class="i-label"
+                               :style="canCombineSkin.value ? '' : 'cursor: not-allowed;'"></label>
+                    </span>
+                </span>
+            </div>
             <ol class="list">
                 <li v-for="(skin, i) of data.skins" :key="i">
                     <input :id="`skin-${skin}`" :value="skin"
-                           v-model="data.skins.checked"
-                           type="radio" class="list-option">
+                           v-model="data.checkedSkins"
+                           type="checkbox" class="list-option">
                     <label :for="`skin-${skin}`" :title="skin">
                         {{ skin }}
                     </label>
@@ -249,7 +261,8 @@
                         : slot.data?.name || ''
                     )
                     .toLowerCase()
-                    .includes(data.slotKey.toLowerCase())">
+                    .includes(data.slotKey.toLowerCase())"
+                    :id="`${i}-slot-item`">
                     <span class="slot-title"
                           :title="pathSwitch ? 'Path: ' + (slot.attachment?.path || null) : slot.data.name">
                         <span class="slot-title-text">
@@ -257,17 +270,17 @@
                         </span>
                         <span class="i-checkbox-wrap">
                             <input type="checkbox"
-                                   :id="`${i}-${slot.data.name}-state`"
+                                   :id="`${i}-slot-state`"
                                    class="i-checkbox"
                                    v-model.number="slot.color.a"
                                    :true-value="1"
                                    :false-value="0"
                             >
-                            <label :for="`${i}-${slot.data.name}-state`" class="i-label"></label>
+                            <label :for="`${i}-slot-state`" class="i-label"></label>
                         </span>
                     </span>
                     <div class="slot-alpha">
-                        <input :id="`${i}-${slot.data.name}`"
+                        <input :id="`${i}-slot`"
                                name="slot" type="range"
                                v-model.number="slot.color.a"
                                style="width: 200px"
@@ -297,9 +310,8 @@ const fileInput = ref()
 const appStore = useAppStore()
 const exportStore = useExportStore()
 
-const data = computed(() => {
-    return appStore.active.container.data
-})
+const data = computed(() => appStore.active.container.data)
+const canCombineSkin = computed(() => appStore.active.container.canCombineSkin)
 
 const pathSwitch = ref(false)
 
@@ -390,8 +402,16 @@ watch(language, value => {
     localStorage.setItem('locale', value)
 })
 
-watch(() => data.value.skins.checked, (value) => {
-    appStore.getActive().setSkin(value)
+watch(() => data.value.checkedSkins, (newValue, oldValue) => {
+    // 可能会导致循环修改
+    if (!appStore.getActive().skinCombination.value) {
+        if (newValue.length > oldValue.length) {
+            newValue.splice(0, oldValue.length)
+        } else if (newValue.length < oldValue.length) {
+            newValue.length = 0
+        }
+    }
+    appStore.getActive().setSkin(newValue)
 })
 
 onMounted(() => {
@@ -614,5 +634,4 @@ input[name='animation'] {
     border: 1px solid #ccc;
     border-radius: 4px;
 }
-
 </style>

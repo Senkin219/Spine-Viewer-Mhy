@@ -1,6 +1,7 @@
 import * as PIXI from "pixi.js";
 import {computed, reactive, ref} from "vue";
 import {Spine} from "pixi-spine";
+import {Skin} from "@pixi-spine/runtime-4.1";
 
 export class Container {
     constructor(x, y, name) {
@@ -10,6 +11,8 @@ export class Container {
         this.atlases = []
         this.background = null
         this.spineVersion = ref('')
+        this.canCombineSkin = ref(true)
+        this.skinCombination = ref(false)
         this.data = reactive({
             position: {
                 _x: 0,
@@ -158,9 +161,23 @@ export class Container {
         })
         this.data.position.x = x
         this.data.position.y = y
-        this.data.skins.checked = ''
         this.data.tracks.checked = 0
         this.data.queue.checked = 0
+        this.data.checkedSkins = reactive([])
+    }
+
+    addSpine(spine) {
+        this.stage.addChild(spine)
+        for (const a of this.stage.children) {
+            const skins = a.skeleton?.data.skins
+            if (!skins || !skins.length) continue
+            if (!skins[0].bones) {
+                this.canCombineSkin.value = false
+                this.skinCombination.value = false
+                return
+            }
+        }
+        this.canCombineSkin.value = true
     }
 
     setFilters() {
@@ -170,12 +187,31 @@ export class Container {
     }
 
     setSkin(skinName) {
-        this.stage.children.forEach(a => {
-            if (a.skeleton?.data.skins.some(s => s.name === skinName)) {
-                a.skeleton.setSkinByName(skinName)
-                a.skeleton.setSlotsToSetupPose()
+        if (typeof skinName === "string") {
+            this.stage.children.forEach(a => {
+                if (a.skeleton?.data.skins.some(s => s.name === skinName)) {
+                    a.skeleton.setSkinByName(skinName)
+                    a.skeleton.setSlotsToSetupPose()
+                }
+            })
+        } else if (Array.isArray(skinName)) {
+            if (skinName.length === 1) {
+                this.setSkin(skinName[0])
+                return
             }
-        })
+            this.stage.children.forEach(a => {
+                if (!a.skeleton) return
+                const skin = new Skin("_")
+                skinName.forEach(name => {
+                    const s = a.skeleton.data.findSkin(name)
+                    if (s) skin.addSkin(s)
+                })
+                a.skeleton.setSkin(skin)
+                a.skeleton.setSlotsToSetupPose()
+            })
+        } else {
+            throw new Error("Unknown skin name " + JSON.stringify(skinName))
+        }
     }
 
     setAnimation(trackIndex, animationName, loop) {

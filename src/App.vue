@@ -21,13 +21,14 @@ import ControlBar from "@/components/Control.vue";
 import GlobalSide from "@/components/GlobalSide.vue";
 import * as PIXI from 'pixi.js'
 import {SpineMhy as Spine} from "@/utils/SpineMhy"
-import {getById, getUrlsByPaths, makeSwitcher} from "@/utils/util";
+import {getById, getUrlsByPaths, highlight, makeSwitcher} from "@/utils/util";
 import {onMounted, provide, ref, toRefs, watch} from "vue";
 import {useExportStore} from "@/stores/export";
 import {useSceneStore} from "@/stores/scene";
 import {useAppStore} from "@/stores/app";
 import useApp from "@/hooks/useApp";
 import i18n from "@/utils/lang";
+import {OutlineFilter} from "@pixi/filter-outline";
 
 document.addEventListener('keydown', (e) => {
     if (e.key === 'F12') {
@@ -81,6 +82,8 @@ pixiApp.loader.use((resource, next) => {
     }
     next()
 })
+
+const outlineFilter = new OutlineFilter(2, 0x00ff00)
 
 provide('pixiApp', pixiApp)
 
@@ -299,6 +302,36 @@ function onLoaded(loader, res) {
                     }
                 }
                 [].push.apply(newSlots, skeletonAnimation.skeleton.slots)
+
+                // 选中插槽
+                skeletonAnimation.slotContainers.forEach((slotContainer, index) => {
+                    slotContainer.interactive = true
+                    slotContainer.buttonMode = true
+                    const slot = skeletonAnimation.skeleton.slots[index]
+                    slotContainer.on('mouseover', () => {
+                        if (!appStore.inspection) return
+                        slotContainer.filters = [outlineFilter]
+                        document.getElementById('slot-info-name').innerText = `Slot: ${slot.data.name}`
+                        document.getElementById('slot-info-attachment').innerText = `Attachment: ${slot.data.attachmentName}`
+                    })
+                    slotContainer.on('mouseout', () => {
+                        slotContainer.filters = null
+                        if (!appStore.inspection) return
+                        document.getElementById('slot-info-name').innerText = 'Slot:'
+                        document.getElementById('slot-info-attachment').innerText = 'Attachment:'
+                    })
+                    slotContainer.on('click', ev => {
+                        if (!appStore.inspection) return
+                        const slotIndex = slots.value.indexOf(slot)
+                        if (!slotIndex) return
+                        const slotId = `${slotIndex}-slot-item`
+                        const e = document.getElementById(slotId)
+                        if (!e) return
+                        e.scrollIntoView({behavior: 'smooth', block: 'center'})
+                        highlight(e)
+                    })
+                })
+
                 validSkeletonAnimations.push(skeletonAnimation)
             } catch (e) {
                 console.error(e)
@@ -313,12 +346,13 @@ function onLoaded(loader, res) {
             if (activeContainer.background) activeContainer.stage.addChild(activeContainer.background)
         }
         activeContainer.spineVersion.value = validSkeletonAnimations[0].spineData.version
-        validSkeletonAnimations.forEach(a => activeContainer.stage.addChild(a))
+        validSkeletonAnimations.forEach(a => activeContainer.addSpine(a))
         skins.value = newSkins
         animations.value = newAnimations
         slots.value = newSlots.sort(slotCompare)
         activeContainer.textures = newTextures
         activeContainer.atlases = newAtlases
+        activeContainer.data.checkedSkins.length = 0
         activeContainer.data.tracks.length = 0
         activeContainer.data.queue.forEach(q => q.length = 0)
         appStore.items[appStore.activeIndex] = activeContainer.name
